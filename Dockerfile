@@ -16,7 +16,7 @@ RUN apk add --no-cache \
     g++ \
     gcc \
     git \
-    ssh \
+    openssh \
     imagemagick \
     libc-dev \
     libpng-dev \
