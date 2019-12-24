@@ -5,7 +5,6 @@ RUN additionalPackages=" \
         curl \
         git \
         nodejs \
-        nodejs-npm \
         msmtp-mta \
         openssh-client \
         rsync \
