@@ -2,12 +2,14 @@ FROM php:7.3
 
 RUN additionalPackages=" \
         apt-transport-https \
-        curl \
+        bash \
+        ca-certificates \
         git \
         nodejs \
         msmtp-mta \
         ssh \
         openssh-client \
+        openssh-server \
         rsync \
         mc \
         nano \
