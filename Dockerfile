@@ -6,8 +6,11 @@ RUN additionalPackages=" \
         git \
         nodejs \
         msmtp-mta \
+        ssh \
         openssh-client \
         rsync \
+        mc \
+        nano \
     " \
     buildDeps=" \
         freetds-dev \
@@ -148,4 +151,3 @@ RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
     && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 CMD ["/bin/bash"]
-
