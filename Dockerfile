@@ -5,7 +5,6 @@ RUN additionalPackages=" \
         bash \
         ca-certificates \
         git \
-        nodejs \
         msmtp-mta \
         ssh \
         openssh-client \
@@ -125,10 +124,7 @@ RUN pecl install amqp \
     && docker-php-ext-enable mongodb redis ast amqp
 
 # Install composer and prestissimo plugin and put binary into $PATH
-RUN curl -sS https://getcomposer.org/installer | php \
-    && mv composer.phar /usr/local/bin/ \
-    && ln -s /usr/local/bin/composer.phar /usr/local/bin/composer \
-    && /usr/local/bin/composer global require hirak/prestissimo
+COPY --from=composer:1 /usr/bin/composer /usr/local/bin/composer
 
 
 # Install testing tools
