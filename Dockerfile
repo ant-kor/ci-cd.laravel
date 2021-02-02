@@ -5,7 +5,6 @@ RUN additionalPackages=" \
         bash \
         ca-certificates \
         git \
-        nodejs \
         msmtp-mta \
         ssh \
         openssh-client \
@@ -37,6 +36,7 @@ RUN additionalPackages=" \
         libxpm-dev \
         libxslt1-dev \
         zlib1g-dev \
+        libonig-dev \
     " \
     && runDeps=" \
         libc-client2007e \
@@ -90,7 +90,6 @@ RUN additionalPackages=" \
         sysvsem \
         sysvshm \
         tidy \
-        wddx \
         xmlrpc \
         xsl \
         zip \
@@ -105,7 +104,7 @@ RUN additionalPackages=" \
     && ln -s /usr/lib/x86_64-linux-gnu/libldap_r.a /usr/lib/libldap_r.a \
     && ln -s /usr/lib/x86_64-linux-gnu/libsybdb.a /usr/lib/libsybdb.a \
     && ln -s /usr/lib/x86_64-linux-gnu/libsybdb.so /usr/lib/libsybdb.so \
-    && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ --with-xpm-dir=/usr/include/ \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-configure imap --with-imap --with-kerberos --with-imap-ssl \
     && docker-php-ext-configure ldap --with-ldap-sasl \
     && docker-php-ext-install $phpModules \
@@ -125,11 +124,7 @@ RUN pecl install amqp \
     && docker-php-ext-enable mongodb redis ast amqp
 
 # Install composer and prestissimo plugin and put binary into $PATH
-RUN curl -sS https://getcomposer.org/installer | php \
-    && mv composer.phar /usr/local/bin/ \
-    && ln -s /usr/local/bin/composer.phar /usr/local/bin/composer \
-    && /usr/local/bin/composer global require hirak/prestissimo
-
+COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 
 # Install testing tools
 RUN /usr/local/bin/composer global require phpunit/phpunit
