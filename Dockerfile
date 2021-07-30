@@ -1,5 +1,8 @@
 FROM php:8-alpine
 
+ENV COMPOSER_ALLOW_SUPERUSER 1
+ENV COMPOSER_MEMORY_LIMIT=-1
+
 # Install dev dependencies
 RUN apk add --no-cache --virtual .build-deps \
     $PHPIZE_DEPS \
@@ -28,7 +31,7 @@ RUN apk add --no-cache \
     zlib-dev \
     postgresql-libs \
     libzip-dev \
-    mc nano
+    mc nano unzip nodejs
 
 # Install PECL and PEAR extensions
 RUN pecl install \
@@ -57,7 +60,7 @@ RUN docker-php-ext-install \
 ENV COMPOSER_HOME /composer
 ENV PATH ./vendor/bin:/composer/vendor/bin:$PATH
 ENV COMPOSER_ALLOW_SUPERUSER 1
-RUN curl -s https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 
 RUN composer global require "squizlabs/php_codesniffer=*" && composer global require laravel/envoy \
