@@ -31,7 +31,7 @@ RUN apk add --no-cache \
     zlib-dev \
     postgresql-libs \
     libzip-dev \
-    mc nano unzip nodejs
+    mc nano unzip
 
 # Install PECL and PEAR extensions
 RUN pecl install \
@@ -68,6 +68,8 @@ RUN composer global require "squizlabs/php_codesniffer=*" && composer global req
     && curl -LO https://deployer.org/deployer.phar \
     && mv deployer.phar /usr/local/bin/dep \
     && chmod +x /usr/local/bin/dep
+
+RUN apk add --no-cache nodejs npm
 
 # Cleanup dev dependencies
 RUN apk del -f .build-deps
