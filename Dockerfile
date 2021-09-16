@@ -60,7 +60,6 @@ RUN additionalPackages=" \
         bz2 \
         calendar \
         dba \
-        enchant \
         exif \
         ftp \
         gd \
