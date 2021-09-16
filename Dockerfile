@@ -24,7 +24,7 @@ RUN apk add --no-cache \
     make \
     mysql-client \
     nodejs \
-    nodejs-npm \
+    npm \
     openssh-client \
     rsync \
     zlib-dev \
