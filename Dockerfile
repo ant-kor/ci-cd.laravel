@@ -5,6 +5,7 @@ RUN additionalPackages=" \
         bash \
         ca-certificates \
         git \
+        curl \
         msmtp-mta \
         ssh \
         openssh-client \
