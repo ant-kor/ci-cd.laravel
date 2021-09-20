@@ -140,7 +140,7 @@ RUN /usr/local/bin/composer global require deployer/deployer deployer/recipes
 # Install Node.js & Yarn
 RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
     && echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list \
-    && curl -sL https://deb.nodesource.com/setup_10.x | bash - \
+    && curl -sL https://deb.nodesource.com/setup_12.x | bash - \
     && apt-get install -y unzip nodejs build-essential yarn \
     && yarn global add pngquant-bin jpegtran-bin cwebp-bin optipng-bin node-sass \
     && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false -o APT::AutoRemove::SuggestsImportant=false $buildDeps \
