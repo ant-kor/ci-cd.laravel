@@ -1,14 +1,15 @@
-FROM php:7.3-alpine
+FROM php:8.1.2-fpm
+
+ENV COMPOSER_ALLOW_SUPERUSER 1
+ENV COMPOSER_MEMORY_LIMIT=-1
 
 # Install dev dependencies
 RUN apk add --no-cache --virtual .build-deps \
     $PHPIZE_DEPS \
     curl-dev \
     imagemagick-dev \
-    libtool \
     libxml2-dev \
-    postgresql-dev \
-    sqlite-dev
+    postgresql-dev
 
 # Install production dependencies
 RUN apk add --no-cache \
@@ -23,13 +24,12 @@ RUN apk add --no-cache \
     libpng-dev \
     make \
     mysql-client \
-    nodejs \
-    npm \
     openssh-client \
     rsync \
     zlib-dev \
     postgresql-libs \
-    libzip-dev
+    libzip-dev \
+    mc nano unzip
 
 # Install PECL and PEAR extensions
 RUN pecl install \
@@ -40,30 +40,33 @@ RUN pecl install \
 RUN docker-php-ext-enable \
     imagick \
     xdebug
-RUN docker-php-ext-configure zip --with-libzip
+RUN docker-php-ext-configure zip
 RUN docker-php-ext-install \
-    curl \
-    iconv \
-    mbstring \
-    pdo \
     pdo_mysql \
     pdo_pgsql \
-    pdo_sqlite \
     pcntl \
-    tokenizer \
     xml \
     gd \
     zip \
-    bcmath
+    bcmath \
+    pcntl \
+    exif \
+    intl
 
 # Install composer
 ENV COMPOSER_HOME /composer
 ENV PATH ./vendor/bin:/composer/vendor/bin:$PATH
 ENV COMPOSER_ALLOW_SUPERUSER 1
-RUN curl -s https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# Install PHP_CodeSniffer
-RUN composer global require "squizlabs/php_codesniffer=*" && composer global require laravel/envoy
+
+RUN composer global require "squizlabs/php_codesniffer=*" && composer global require laravel/envoy \
+    && composer global require deployer/recipes \
+    && curl -LO https://deployer.org/deployer.phar \
+    && mv deployer.phar /usr/local/bin/dep \
+    && chmod +x /usr/local/bin/dep
+
+RUN apk add --no-cache nodejs npm
 
 # Cleanup dev dependencies
 RUN apk del -f .build-deps
