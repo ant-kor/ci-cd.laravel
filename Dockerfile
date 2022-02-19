@@ -8,7 +8,6 @@ RUN apk add --no-cache --virtual .build-deps \
     $PHPIZE_DEPS \
     curl-dev \
     imagemagick-dev \
-    libtool \
     libxml2-dev \
     postgresql-dev \
     sqlite-dev
@@ -47,7 +46,6 @@ RUN docker-php-ext-install \
     pdo_mysql \
     pdo_pgsql \
     pcntl \
-    tokenizer \
     xml \
     gd \
     zip \
