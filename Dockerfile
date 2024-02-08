@@ -36,11 +36,9 @@ RUN apt -y install --no-install-recommends \
 
 
 # Install PECL and PEAR extensions
-RUN pecl install imagick \
-    && pecl install -o -f redis \
-    && docker-php-ext-enable imagick \
-    && docker-php-ext-enable redis \
-    && rm -rf /tmp/pear
+RUN pecl install imagick && docker-php-ext-enable imagick
+RUN pecl install -o -f redis && docker-php-ext-enable redis
+
 
 RUN docker-php-ext-install \
     pdo_mysql \
