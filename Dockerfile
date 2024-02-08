@@ -32,7 +32,8 @@ RUN apt -y install --no-install-recommends \
     libmagickwand-dev \
     libldap2-dev \
     libfreetype6-dev \
-    libfreetype6
+    libfreetype6 \
+    ghostscript
 
 
 # Install PECL and PEAR extensions
