@@ -7,10 +7,10 @@ ENV DEBIAN_FRONTEND noninteractive
 ENV PATH ./vendor/bin:/composer/vendor/bin:$PATH
 
 # Install dev dependencies
-RUN apt-get update && apt-get upgrade
+RUN apt -y update && apt -y upgrade
 
 # Install production dependencies
-RUN apt-get install -y --no-install-recommends \
+RUN apt -y install --no-install-recommends \
     bash \
     wget \
     curl \
