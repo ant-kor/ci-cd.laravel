@@ -7,10 +7,10 @@ ENV DEBIAN_FRONTEND noninteractive
 ENV PATH ./vendor/bin:/composer/vendor/bin:$PATH
 
 # Install dev dependencies
-RUN apt -y update && apt -y upgrade
+RUN apt-get update -y && apt-get upgrade -y
 
 # Install production dependencies
-RUN apt -y install --no-install-recommends \
+RUN apt-get install -y --no-install-recommends \
     bash \
     wget \
     curl \
@@ -33,13 +33,15 @@ RUN apt -y install --no-install-recommends \
     libldap2-dev \
     libfreetype6-dev \
     libfreetype6 \
-    ghostscript
+	ca-certificates gnupg
 
 
 # Install PECL and PEAR extensions
-RUN pecl install imagick && docker-php-ext-enable imagick
-RUN pecl install -o -f redis && docker-php-ext-enable redis
-
+RUN pecl install imagick \
+    && pecl install -o -f redis \
+    && docker-php-ext-enable imagick \
+    && docker-php-ext-enable redis \
+    && rm -rf /tmp/pear
 
 RUN docker-php-ext-install \
     pdo_mysql \
@@ -61,15 +63,17 @@ RUN docker-php-ext-configure gd \
     && docker-php-ext-configure ldap
 
 # Install composer
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
-    && curl -sL https://deb.nodesource.com/setup_14.x | bash - \
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer 
+# Install nodejs
+RUN curl -sL https://deb.nodesource.com/setup_18.x | bash - \
     && apt-get install -y nodejs
 
 RUN composer global require "squizlabs/php_codesniffer=*" \
     && curl -LO https://deployer.org/deployer.phar \
     && mv deployer.phar /usr/local/bin/dep \
-    && chmod +x /usr/local/bin/dep \
-    && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && php -m
+    && chmod +x /usr/local/bin/dep
+    
+RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && php -m
 
 # Setup working directory
 WORKDIR /var/www
