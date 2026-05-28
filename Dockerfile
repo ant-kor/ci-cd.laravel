@@ -9,14 +9,13 @@ ENV PATH ./vendor/bin:/composer/vendor/bin:$PATH
 ENV MYSQL_ROOT_PASSWORD root
 ENV MYSQL_DATABASE test
 
-# Install dev dependencies
-RUN apt-get update -y && apt-get upgrade -y
-
 # Install production dependencies
-RUN apt-get install -y --no-install-recommends \
+RUN apt-get update -y \
+    && apt-get install -y --no-install-recommends \
     bash \
     wget \
     curl \
+    jq \
     g++ \
     gcc \
     ssh \
@@ -34,10 +33,12 @@ RUN apt-get install -y --no-install-recommends \
     libzip-dev \
     libmagickwand-dev \
     libldap2-dev \
+    python3-pip \
     libfreetype6-dev \
     libfreetype6 \
 	ca-certificates gnupg \
-	mysql-server
+	default-mysql-server \
+    && rm -rf /var/lib/apt/lists/*
 
 
 # Install PECL and PEAR extensions
@@ -72,6 +73,10 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 RUN curl -sL https://deb.nodesource.com/setup_18.x | bash - \
     && apt-get install -y nodejs
 
+RUN npm install -g retire
+
+RUN python3 -m pip install semgrep --break-system-packages
+
 RUN composer global require "squizlabs/php_codesniffer=*" \
     && curl -LO https://deployer.org/releases/v7.5.12/deployer.phar  \
     && mv deployer.phar /usr/local/bin/dep \
@@ -79,9 +84,9 @@ RUN composer global require "squizlabs/php_codesniffer=*" \
     
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && php -m
 
-RUN service mysql start && \
-    mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '${MYSQL_ROOT_PASSWORD}'; FLUSH PRIVILEGES;" && \
-    mysql -e "CREATE DATABASE ${MYSQL_DATABASE};"
+RUN service mariadb start && \
+    mariadb -uroot -e "ALTER USER 'root'@'localhost' IDENTIFIED VIA mysql_native_password USING PASSWORD('${MYSQL_ROOT_PASSWORD}'); FLUSH PRIVILEGES;" && \
+    mariadb -uroot -p"${MYSQL_ROOT_PASSWORD}" -e "CREATE DATABASE IF NOT EXISTS \`${MYSQL_DATABASE}\`;"
 
 CMD ["mysqld"]
 # Setup working directory
