@@ -36,7 +36,9 @@ RUN apt-get update -y \
     python3-pip \
     libfreetype6-dev \
     libfreetype6 \
-	ca-certificates gnupg \
+    libjpeg62-turbo-dev \
+    libwebp-dev \
+    ca-certificates gnupg \
 	default-mysql-server \
     && rm -rf /var/lib/apt/lists/*
 
@@ -48,6 +50,15 @@ RUN pecl install imagick \
     && docker-php-ext-enable redis \
     && rm -rf /tmp/pear
 
+RUN docker-php-ext-configure gd \
+    --with-freetype \
+    --with-jpeg \
+    --with-webp \
+    && docker-php-ext-configure zip \
+    && ln -s /usr/lib/x86_64-linux-gnu/libldap_r.so /usr/lib/libldap.so \
+    && ln -s /usr/lib/x86_64-linux-gnu/libldap_r.a /usr/lib/libldap_r.a \
+    && docker-php-ext-configure ldap
+
 RUN docker-php-ext-install \
     pdo_mysql \
     pcntl \
@@ -56,16 +67,9 @@ RUN docker-php-ext-install \
     zip \
     bcmath \
     exif \
-    gd \
     ldap \
     soap \
     intl
-
-RUN docker-php-ext-configure gd \
-    && docker-php-ext-configure zip \
-    && ln -s /usr/lib/x86_64-linux-gnu/libldap_r.so /usr/lib/libldap.so \
-    && ln -s /usr/lib/x86_64-linux-gnu/libldap_r.a /usr/lib/libldap_r.a \
-    && docker-php-ext-configure ldap
 
 # Install composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer 
