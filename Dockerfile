@@ -4,12 +4,10 @@ ENV COMPOSER_ALLOW_SUPERUSER 1
 ENV COMPOSER_HOME /composer
 ENV COMPOSER_MEMORY_LIMIT=-1
 ENV DEBIAN_FRONTEND noninteractive
-ENV PATH ./vendor/bin:/composer/vendor/bin:$PATH
+ENV DOCKER_APP_DIR /var/www
+ENV PATH ${DOCKER_APP_DIR}/vendor/bin:/composer/vendor/bin:$PATH
 
-ENV MYSQL_ROOT_PASSWORD root
-ENV MYSQL_DATABASE test
-
-# Install production dependencies
+# Install dependencies
 RUN apt-get update -y \
     && apt-get install -y --no-install-recommends \
     bash \
@@ -38,8 +36,8 @@ RUN apt-get update -y \
     libfreetype6 \
     libjpeg62-turbo-dev \
     libwebp-dev \
-    ca-certificates gnupg \
-	default-mysql-server \
+    ca-certificates \
+    gnupg \
     && rm -rf /var/lib/apt/lists/*
 
 
@@ -88,10 +86,4 @@ RUN composer global require "squizlabs/php_codesniffer=*" \
     
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && php -m
 
-RUN service mariadb start && \
-    mariadb -uroot -e "ALTER USER 'root'@'localhost' IDENTIFIED VIA mysql_native_password USING PASSWORD('${MYSQL_ROOT_PASSWORD}'); FLUSH PRIVILEGES;" && \
-    mariadb -uroot -p"${MYSQL_ROOT_PASSWORD}" -e "CREATE DATABASE IF NOT EXISTS \`${MYSQL_DATABASE}\`;"
-
-CMD ["mysqld"]
-# Setup working directory
-WORKDIR /var/www
+WORKDIR ${DOCKER_APP_DIR}
